@@ -1,49 +1,71 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <windows.h>
+#include <stdio.h>
 #define garo 40
-#define sero 40
+#define sero 24
 INPUT_RECORD rec;
 DWORD dwNOER;
 HANDLE CIN = 0;
-int  zari = 6, printx = 0, printy = 4, lastnum, cnt = 0, type = 0, left = 0, right = 0;
-char a[7], b[7];
-void inputMouseSetting() {
-    DWORD mode;
+int startx,starty;
+int redcarx = 10;
+int redcary = 9;
+int bluetruckx = 20;
+int bluetrucky = 6;
+int now = 0;        // red 2 blue 3
+int last =0;
+int stagex= 3;
+int stagey =0 ;
+int stagearr[5][5]  = {
+    {1,6,11,16,21},
+    {2,7,12,17,22},
+    {3,8,13,18,23},
+    {4,9,14,19,24},
+    {5,10,15,20,25}
+};
+int map1[24][40] =
+{{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+int redcar[3][10] = {
+    {2,2,2,2,2,2,2,2,2,2},
+    {3,2,2,2,2,2,2,2,4,2},
+    {2,2,2,2,2,2,2,2,2,2}
+};
+int bluetruck[9][5] = {
+    {2,2,2,2,2},
+    {2,2,2,2,2},
+    {2,2,2,2,2},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1}
 
-    GetConsoleMode(CIN, &mode); // 현재 콘솔 입력 모드를 가져온다.
-    SetConsoleMode(CIN, mode | ENABLE_MOUSE_INPUT); // 마우스 입력을 허용한다.
-}
 
-int error[32][64] =
-{ {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,1,1,1,0,0,0,0,1,1,1,0,1,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,1,0,1,1,1,0,0,0},
-{0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0},
-{0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,1,1,1,0},
-{0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,1,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} };
-enum colorName {
+};
+enum colorName
+{
     BLACK,
     D_BLUE,
     D_GREEN,
@@ -61,169 +83,6 @@ enum colorName {
     YELLOW,
     WHITE,
 };
-
-int zero[7][5] =
-{ {0,1,1,1,0},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0} };
-
-
-int one[7][5] =
-{ {0,0,1,0,0},
-{0,1,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{0,1,1,1,0} };
-
-int two[7][5] =
-{ {0,1,1,1,0},
-{1,0,0,0,1},
-{0,0,0,0,1},
-{0,0,0,1,0},
-{0,0,1,0,0},
-{0,1,0,0,0},
-{1,1,1,1,1} };
-int three[7][5] =
-{ {0,1,1,1,0},
-{1,0,0,0,1},
-{0,0,0,0,1},
-{0,0,1,1,0},
-{0,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0} };
-int four[7][5] =
-{ {0,0,0,1,0},
-{0,0,1,1,0},
-{0,1,0,1,0},
-{1,0,0,1,0},
-{1,1,1,1,1},
-{0,0,0,1,0},
-{0,0,0,1,0} };
-int five[7][5] =
-{ {1,1,1,1,1},
-{1,0,0,0,0},
-{1,1,1,1,0},
-{0,0,0,0,1},
-{0,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0} };
-int six[7][5] =
-{ {0,1,1,1,0},
-{1,0,0,0,1},
-{1,0,0,0,0},
-{1,1,1,1,0},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0} };
-int sev[7][5] =
-{ {1,1,1,1,1},
-{0,0,0,0,1},
-{0,0,0,1,0},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0} };
-int eight[7][5] =
-
-{ {0,1,1,1,0},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0} };
-int nine[7][5] =
-{ {0,1,1,1,0},
-{1,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,1},
-{0,0,0,0,1},
-{1,0,0,0,1},
-{0,1,1,1,0} };
-int sum[7][5] =
-{ {0,0,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{1,1,1,1,1},
-{0,0,1,0,0},
-{0,0,1,0,0},
-{0,0,1,0,0}, };
-int bbel[7][5] =
-{ {0,0,0,0,0},
-{0,0,0,0,0},
-{0,0,0,0,0},
-{1,1,1,1,1},
-{0,0,0,0,0},
-{0,0,0,0,0},
-{0,0,0,0,0}, };
-int gob[7][5] =
-{ {1,0,0,0,1},
-{1,0,0,0,1},
-{0,1,0,1,0},
-{0,0,1,0,0},
-{0,1,0,1,0},
-{1,0,0,0,1},
-{1,0,0,0,1}, };
-int nanu[7][5] =
-{ {0,0,0,0,1},
-{0,0,0,0,1},
-{0,0,0,1,0},
-{0,0,1,0,0},
-{0,1,0,0,0},
-{1,0,0,0,0},
-{1,0,0,0,0}, };
-int gyesangi[sero][garo] =
-{ {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-{1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1},
-
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,4,4,4,4,4,4,4,4,4,4,1,1,1,1,1},
-{1,1,1,1,1,3,3,3,3,31,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,4,4,4,4,32,33,4,4,4,4,1,1,1,1,1},
-{1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,4,4,4,4,4,4,4,4,4,4,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,5,5,5,5,5,5,1,1,6,6,6,6,6,6,1,1,7,7,7,7,7,7,1,1,8,8,8,8,8,8,1,1,1,1,1},
-{1,1,1,1,1,5,5,5,5,5,5,1,1,6,6,6,6,6,6,1,1,7,7,7,7,7,7,1,1,8,8,8,8,8,8,1,1,1,1,1},
-{1,1,1,1,1,5,5,19,5,5,5,1,1,6,6,20,6,6,6,1,1,7,7,21,7,7,7,1,1,8,8,22,8,8,8,1,1,1,1,1},
-{1,1,1,1,1,5,5,5,5,5,5,1,1,6,6,6,6,6,6,1,1,7,7,7,7,7,7,1,1,8,8,8,8,8,8,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,9,9,9,9,9,9,1,1,10,10,10,10,10,10,1,1,11,11,11,11,11,11,1,1,12,12,12,12,12,12,1,1,1,1,1},
-{1,1,1,1,1,9,9,9,9,9,9,1,1,10,10,10,10,10,10,1,1,11,11,11,11,11,11,1,1,12,12,12,12,12,12,1,1,1,1,1},
-{1,1,1,1,1,9,9,23,9,9,9,1,1,10,10,24,10,10,10,1,1,11,11,25,11,11,11,1,1,12,12,26,12,12,12,1,1,1,1,1},
-{1,1,1,1,1,9,9,9,9,9,9,1,1,10,10,10,10,10,10,1,1,11,11,11,11,11,11,1,1,12,12,12,12,12,12,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,13,13,13,13,13,13,1,1,14,14,14,14,14,14,1,1,15,15,15,15,15,15,1,1,16,16,16,16,16,16,1,1,1,1,1},
-{1,1,1,1,1,13,13,13,13,13,13,1,1,14,14,14,14,14,14,1,1,15,15,15,15,15,15,1,1,16,16,16,16,16,16,1,1,1,1,1},
-{1,1,1,1,1,13,13,27,13,13,13,1,1,14,14,28,14,14,14,1,1,15,15,29,15,15,15,1,1,16,16,30,16,16,16,1,1,1,1,1},
-{1,1,1,1,1,13,13,13,13,13,13,1,1,14,14,14,14,14,14,1,1,15,15,15,15,15,15,1,1,16,16,16,16,16,16,1,1,1,1,1},
-
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,17,17,17,17,17,17,1,1,1,1,1,1,1,1,1,1,34,34,34,34,34,34,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,17,17,18,17,17,17,1,1,1,1,1,1,1,1,1,1,34,34,35,34,34,34,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,17,17,17,17,17,17,1,1,1,1,1,1,1,1,1,1,34,34,34,34,34,34,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
-
 void CursorView(char show) {
     HANDLE hConsole;
     CONSOLE_CURSOR_INFO ConsoleCursor;
@@ -249,1068 +108,377 @@ void drw(int bgColor, int textColor) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), bgColor * 16 + textColor);
 
 }
-void click(int* xx, int* yy) {
-    while (1)
-    {
-        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), &rec, 1, &dwNOER); // 콘솔창 입력을 받아들임.
-        if (rec.EventType == MOUSE_EVENT){// 마우스 이벤트일 경우
+void makecar(int a) {
+
+    int i,j;
+    if(a == 1) {
+        gotoxy(redcarx, redcary);
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 10; j++) {
+                map1[i+redcary][j+redcarx] = 2;
+                if (redcar[i][j] == 2) {
 
 
-            if (rec.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED){ // 좌측 버튼이 클릭되었을 경우
+                    gotoxy(redcarx + j, redcary + i);
+                    drw(RED, RED);
+                    printf(" ");
+                }
+                if (redcar[i][j] == 3) {
 
-            int mouse_x = rec.Event.MouseEvent.dwMousePosition.X; // X값 받아옴
-                int mouse_y = rec.Event.MouseEvent.dwMousePosition.Y; // Y값 받아옴
-                drw(BLACK, WHITE);
-                gotoxy(52,27);
-                printf("%2d %2d\n",mouse_x,mouse_y);
-                *xx=mouse_x; //x값을 넘김
-                *yy=mouse_y; //y값을 넘김
+                    gotoxy(redcarx + j, redcary + i);
+                    drw(BLACK, BLACK);
+                    printf(" ");
+                }
+                if (redcar[i][j] == 4) {
+
+                    gotoxy(redcarx + j, redcary + i);
+                    drw(BLUE, BLUE);
+                    printf(" ");
+                }
+            }
+        }
+    }
+    if(a == 2) {
+        gotoxy(bluetruckx, bluetrucky);
+        for (i = 0; i < 9; i++) {
+            for (j = 0; j < 5; j++) {
+                map1[i+bluetrucky][j+bluetruckx] = 3;
+                if (bluetruck[i][j] == 1) {
+
+
+                    gotoxy(bluetruckx + j, bluetrucky + i);
+                    drw(D_BLUE, D_BLUE);
+                    printf(" ");
+                }
+                if (bluetruck[i][j] == 2) {
+
+                    gotoxy(bluetruckx + j, bluetrucky + i);
+                    drw(BLUE, BLUE);
+                    printf(" ");
+                }
+                if (bluetruck[i][j] == 3) {
+
+                    gotoxy(bluetruckx + j, bluetrucky + i);
+                    drw(BLUE, BLUE);
+                    printf(" ");
+                }
+            }
+        }
+    }
+
+}
+void map1print() {
+    int i, j;
+    for (i = 0; i < sero; i++) {
+        for (j = 0; j < garo; j++) {
+
+            gotoxy(j, i);
+            if (map1[i][j] == 1) {
+
+                drw(GRAY, GRAY);
+                printf(" ");
+            }
+        }
+        Sleep(100);
+    }
+
+
+}
+void stage() {
+    int i,j;
+    int cnt=1;
+
+    for(j=0;j<25;j+=5) {
+        for(i=0;i<5;i++){
+            gotoxy(j,i);
+            printf("%2d",cnt++);
+        }
+    }
+    gotoxy(2,7);
+    printf("Press The Space Bar");
+    gotoxy(stagex,stagey);
+    printf("0");
+    while(1) {
+        if(GetAsyncKeyState(VK_DOWN)) {
+            if(stagey < 4) {
+                gotoxy(stagex,stagey);
+                drw(BLACK,BLACK);
+                printf(" ");
+                stagey+=1;
+                drw(BLACK,WHITE);
+                gotoxy(stagex,stagey);
+                printf("0");
+                Sleep(250);
+            }
+        }
+        if(GetAsyncKeyState(VK_UP)) {
+            if(stagey >0) {
+                gotoxy(stagex,stagey);
+                drw(BLACK,BLACK);
+                printf(" ");
+                stagey-=1;
+                drw(BLACK,WHITE);
+                gotoxy(stagex,stagey);
+                printf("0");
+                Sleep(250);
+            }
+        }
+        if(GetAsyncKeyState(VK_LEFT)) {
+            if(stagex >4) {
+                gotoxy(stagex,stagey);
+                drw(BLACK,BLACK);
+                printf(" ");
+                stagex-=5;
+                drw(BLACK,WHITE);
+                gotoxy(stagex,stagey);
+                printf("0");
+                Sleep(250);
+            }
+        }
+        if(GetAsyncKeyState(VK_RIGHT)) {
+            if(stagex < 20) {
+                gotoxy(stagex,stagey);
+                drw(BLACK,BLACK);
+                printf(" ");
+                stagex+=5;
+                drw(BLACK,WHITE);
+                gotoxy(stagex,stagey);
+                printf("0");
+                Sleep(250);
+            }
+        }
+        if(GetAsyncKeyState(VK_SPACE)) {
+            for(int i=0;i<10;i++) {
+                for(int j=0;j<27;j++) {
+                    gotoxy(j,i);
+                    drw(BLACK,BLACK);
+                    printf(" ");
+                }
+            }
+            if(stagearr[stagey][stagex/5] == 1) {
+                map1print();
+
+                makecar(2);
+                makecar(1);
                 break;
             }
         }
     }
 }
-void oneprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (one[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void twoprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (two[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void threeprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (three[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void fourprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (four[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void fiveprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (five[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void sixprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (six[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void sevenprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (sev[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void eightprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (eight[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void nineprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (nine[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-void zeroprint(int i) {
-    int j, k;
-    for (j = 0; j < 7; j++) {
-        for (k = 0; k < 5; k++) {
-            if (zero[j][k] == 1) {
-                gotoxy(printx + i * 5 + k, printy + j);
-                drw(BLUE, BLUE);
-                printf(" ");
-            }
-        }
-    }
-}
-int main()
-{
 
-    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT); //마우스 입력모드로 바꿈
+void moveredcarright(){
+    int i,j;
+    for(i=0;i<3;i++) {
+        for(j=0;j< 10;j++) {
+            map1[i+redcary][j+redcarx] = 0;
+            gotoxy(redcarx + j, redcary + i);
+            drw(BLACK,BLACK);
+            printf(" ");
+        }
+    }
+    redcarx+=5;
+    gotoxy(redcarx, redcary);
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 10; j++) {
+                map1[i+redcary][j+redcarx] = 2;
+            if (redcar[i][j] == 2) {
+
+                gotoxy(redcarx + j, redcary + i);
+                drw(RED, RED);
+                printf(" ");
+            }
+            if (redcar[i][j] == 3) {
+
+                gotoxy(redcarx + j, redcary + i);
+                drw(BLACK, BLACK);
+                printf(" ");
+            }
+            if (redcar[i][j] == 4) {
+
+                gotoxy(redcarx + j, redcary + i);
+                drw(BLUE, BLUE);
+                printf(" ");
+            }
+        }
+    }
+
+}
+void moveredcarleft(){
+    int i,j;
+    for(i=0;i<3;i++) {
+        for(j=0;j< 10;j++) {
+            map1[i+redcary][j+redcarx] = 0;
+            gotoxy(redcarx + j, redcary + i);
+            drw(BLACK,BLACK);
+            printf(" ");
+        }
+    }
+    redcarx-=5;
+    gotoxy(redcarx, redcary);
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 10; j++) {
+                map1[i+redcary][j+redcarx] = 2;
+            if (redcar[i][j] == 2) {
+
+                gotoxy(redcarx + j, redcary + i);
+                drw(RED, RED);
+                printf(" ");
+            }
+            if (redcar[i][j] == 3) {
+
+                gotoxy(redcarx + j, redcary + i);
+                drw(BLACK, BLACK);
+                printf(" ");
+            }
+            if (redcar[i][j] == 4) {
+
+                gotoxy(redcarx + j, redcary + i);
+                drw(BLUE, BLUE);
+                printf(" ");
+            }
+        }
+    }
+
+}
+void moveseroup() {
+    int i,j;
+    for(i=0;i<9;i++) {
+        for(j=0;j< 5;j++) {
+            map1[i+bluetrucky][j+bluetruckx] = 0;
+            gotoxy(bluetruckx + j, bluetrucky + i);
+            drw(BLACK,BLACK);
+            printf(" ");
+        }
+    }
+    bluetrucky-=3;
+    gotoxy(bluetruckx, bluetrucky);
+    for (i = 0; i < 9; i++) {
+        for (j = 0; j < 5; j++) {
+                map1[i+bluetrucky][j+bluetruckx] = 3;
+            if (bluetruck[i][j] == 1) {
+
+                gotoxy(bluetruckx + j, bluetrucky + i);
+                drw(D_BLUE, D_BLUE);
+                printf(" ");
+            }
+            if (bluetruck[i][j] == 2) {
+
+                gotoxy(bluetruckx + j, bluetrucky + i);
+                drw(BLUE,BLUE);
+                printf(" ");
+            }
+
+        }
+    }
+
+}
+void moveserodown() {
+    int i,j;
+    for(i=0;i<9;i++) {
+        for(j=0;j< 5;j++) {
+            map1[i+bluetrucky][j+bluetruckx] = 0;
+            gotoxy(bluetruckx + j, bluetrucky + i);
+            drw(BLACK,BLACK);
+            printf(" ");
+        }
+    }
+    bluetrucky+=3;
+    gotoxy(bluetruckx, bluetrucky);
+    for (i = 0; i < 9; i++) {
+        for (j = 0; j < 5; j++) {
+                map1[i+bluetrucky][j+bluetruckx] = 3;
+            if (bluetruck[i][j] == 1) {
+
+                gotoxy(bluetruckx + j, bluetrucky + i);
+                drw(D_BLUE, D_BLUE);
+                printf(" ");
+            }
+            if (bluetruck[i][j] == 2) {
+
+                gotoxy(bluetruckx + j, bluetrucky + i);
+                drw(BLUE,BLUE);
+                printf(" ");
+            }
+
+        }
+    }
+
+}
+void click(int *xx, int *yy){
+    while (1)
+    {
+        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), &rec, 1, &dwNOER); // 콘솔창 입력을 받아들임.
+        if (rec.EventType == MOUSE_EVENT){// 마우스 이벤트일 경우
+
+            if(map1[rec.Event.MouseEvent.dwMousePosition.Y][rec.Event.MouseEvent.dwMousePosition.X] == 2) {
+                    now = 2;
+
+            }
+            if(map1[rec.Event.MouseEvent.dwMousePosition.Y][rec.Event.MouseEvent.dwMousePosition.X] == 3) {
+                    now = 3;
+
+            }
+            if(map1[rec.Event.MouseEvent.dwMousePosition.Y][rec.Event.MouseEvent.dwMousePosition.X] == 0) {
+                    now = 0;
+            }
+
+            if (rec.Event.MouseEvent.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED){ // 좌측 버튼이 클릭되었을 경우
+                int mouse_x = rec.Event.MouseEvent.dwMousePosition.X; // X값 받아옴
+                int mouse_y = rec.Event.MouseEvent.dwMousePosition.Y; // Y값 받아옴
+                drw(BLACK, WHITE);
+                gotoxy(3,26);
+                printf("%2d %2d\n",mouse_x,mouse_y);
+
+
+                drw(BLACK, WHITE);
+                gotoxy(3,27);
+                printf("%d %d",last,now);
+                if(mouse_y<=sero&&mouse_x<=garo) {
+                    gotoxy(3,30);
+                    printf("%d", map1[mouse_y][mouse_x]);
+                }
+                if(last != now && now == 0 &&last==2) {
+                    if(redcarx < mouse_x && map1[redcary][redcarx+10]  == 0) {
+                        moveredcarright();
+                    }
+                    else if(redcarx >= mouse_x && map1[redcary][redcarx-5] == 0) moveredcarleft();
+                }
+                if(last != now && now == 0 &&last==3) {
+                    if(bluetrucky > mouse_y && map1[bluetrucky-3][bluetruckx]  == 0) {
+                        moveseroup();
+                    }
+                    else if(redcarx < mouse_x && map1[bluetrucky+9][bluetruckx] == 0) moveserodown();
+                }
+                *xx=mouse_x; //x값을 넘김
+                *yy=mouse_y; //y값을 넘김
+
+
+
+                break;
+            }
+            last = now;
+        }
+    }
+}
+
+
+
+
+int main(){
+    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
+    //마우스 입력모드로 바꿈
     CursorView(0);
+    //system("cis");
+    stage();
 
-    for (int i = 0; i < sero; i++) {
-        for (int j = 0; j < garo; j++) {
-            gotoxy(j, i);
-            if (gyesangi[i][j] == 1) {
-                drw(GRAY, GRAY);
-                printf(" ");
-            }
+    int xx,yy;
+    while (1){
 
-            else if (gyesangi[i][j] != 2) {
-                if (gyesangi[i][j] == 18) {
-                    drw(YELLOW, BLACK);
-                    printf("0");
-                }
-                if (gyesangi[i][j] == 19) {
-                    drw(YELLOW, BLACK);
-                    printf("1");
-                }
-                if (gyesangi[i][j] == 20) {
-                    drw(YELLOW, BLACK);
-                    printf("2");
-                }
-                if (gyesangi[i][j] == 21) {
-                    drw(YELLOW, BLACK);
-                    printf("3");
-                }
-                if (gyesangi[i][j] == 22) {
-                    drw(YELLOW, BLACK);
-                    printf("-");
-                }
-                if (gyesangi[i][j] == 23) {
-                    drw(YELLOW, BLACK);
-                    printf("4");
-                }
-                if (gyesangi[i][j] == 24) {
-                    drw(YELLOW, BLACK);
-                    printf("5");
-                }
-                if (gyesangi[i][j] == 25) {
-                    drw(YELLOW, BLACK);
-                    printf("6");
-                }
-                if (gyesangi[i][j] == 26) {
-                    drw(YELLOW, BLACK);
-                    printf("*");
-                }
-                if (gyesangi[i][j] == 27) {
-                    drw(YELLOW, BLACK);
-                    printf("7");
-                }
-                if (gyesangi[i][j] == 28) {
-                    drw(YELLOW, BLACK);
-                    printf("8");
-                }
-                if (gyesangi[i][j] == 29) {
-                    drw(YELLOW, BLACK);
-                    printf("9");
-                }
-                if (gyesangi[i][j] == 30) {
-                    drw(YELLOW, BLACK);
-                    printf("/");
-                }
-                if (gyesangi[i][j] == 31) {
-                    drw(YELLOW, BLACK);
-                    printf("+");
-                }
-                if (gyesangi[i][j] == 32) {
-                    drw(YELLOW, BLACK);
-                    printf("c");
-                }
-                if (gyesangi[i][j] == 33) {
-                    drw(YELLOW, BLACK);
-                    printf("e");
-                }
-
-                if (gyesangi[i][j] == 35) {
-                    drw(YELLOW, BLACK);
-                    printf("=");
-                }
-                drw(YELLOW, YELLOW);
-                printf(" ");
-            }
-
-        }
-    }
-    int xx, yy, i, j, k;
-    for (i = 0; i < 7; i++) {
-        a[i] = -1;
-    }
-    while (1) {
-        if (cnt > 6) {
-            for (i = 0; i < sero; i++) {
-                for (j = 0; j < garo; j++) {
-                    gotoxy(j, i);
-                    drw(BLACK, BLACK);
-                    printf(" ");
-                }
-            }
-            for (i = 0; i < 32; i++) {
-                for (j = 0; j < 64; j++) {
-                    if (error[i][j] == 1) {
-                        gotoxy(j, i);
-                        drw(RED, RED);
-                        printf(" ");
-                    }
-                }
-            }
-
-            exit(0);
-        }
-        Sleep(100);
         click(&xx, &yy);
-        gotoxy(50, 28);
         drw(BLACK, WHITE);
-        printf("%2d %2d\n", xx, yy);
-        if (gyesangi[yy + 1][xx + 1] == 3 || gyesangi[yy + 1][xx + 1] == 31) {
-            type = 1;
-            zari = 6;
-            cnt = 0;
-            for (k = 3; k < 12; k++) {
-                for (j = 5; j < 35; j++) {
-                    gotoxy(j, k);
-                    drw(BLACK, BLACK);
-                    printf(" ");
-                }
-            }
-            for (i = -1; i <= 8; i++) {
-                b[i] = -1;
-            }
-
-        }
-        if (gyesangi[yy + 1][xx + 1] == 8 || gyesangi[yy + 1][xx + 1] == 22) {
-            type = 2;
-            zari = 6;
-            cnt = 0;
-            for (k = 3; k < 12; k++) {
-                for (j = 5; j < 35; j++) {
-                    gotoxy(j, k);
-                    drw(BLACK, BLACK);
-                    printf(" ");
-                }
-            }
-            for (i = -1; i <= 8; i++) {
-                b[i] = -1;
-            }
-
-        }
-        if (gyesangi[yy + 1][xx + 1] == 12 || gyesangi[yy + 1][xx + 1] == 26) {
-            type = 3;
-            zari = 6;
-            cnt = 0;
-            for (k = 3; k < 12; k++) {
-                for (j = 5; j < 35; j++) {
-                    gotoxy(j, k);
-                    drw(BLACK, BLACK);
-                    printf(" ");
-                }
-            }
-            for (i = -1; i <= 8; i++) {
-                b[i] = -1;
-            }
-
-        }
-        if (gyesangi[yy + 1][xx + 1] == 16 || gyesangi[yy + 1][xx + 1] == 30) {
-            type = 4;
-            zari = 6;
-            cnt = 0;
-            for (k = 3; k < 12; k++) {
-                for (j = 5; j < 35; j++) {
-                    gotoxy(j, k);
-                    drw(BLACK, BLACK);
-                    printf(" ");
-                }
-            }
-            for (i = -1; i <= 8; i++) {
-                b[i] = -1;
-            }
-
-        }
-        if (gyesangi[yy + 1][xx + 1] == 4 || gyesangi[yy + 1][xx + 1] == 32 || gyesangi[yy + 1][xx + 1] == 33) {    //reset
-            zari = 6;
-            cnt = 0;
-            type = 0;
-            for (k = 3; k < 12; k++) {
-                for (j = 5; j < 35; j++) {
-                    gotoxy(j, k);
-                    drw(BLACK, BLACK);
-                    printf(" ");
-                }
-            }
-            for (i = -1; i <= 8; i++) {
-                a[i] = -1;
-            }
-        }
-        if (type == 0) {
-            for (i = 0; i <= 6; i++) {
-                if (a[i] >= 0 && a[i] < 10) {
-                    if (a[i] == 1) oneprint(i);
-                    if (a[i] == 2) twoprint(i);
-                    if (a[i] == 3) threeprint(i);
-                    if (a[i] == 4) fourprint(i);
-                    if (a[i] == 5) fiveprint(i);
-                    if (a[i] == 6) sixprint(i);
-                    if (a[i] == 7) sevenprint(i);
-                    if (a[i] == 8) eightprint(i);
-                    if (a[i] == 9) nineprint(i);
-                    if (a[i] == 0) zeroprint(i);
-                }
-            }
-            if (gyesangi[yy + 1][xx + 1] == 5 || gyesangi[yy + 1][xx + 1] == 19) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 1;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 6 || gyesangi[yy + 1][xx + 1] == 20) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 2;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-
-            if (gyesangi[yy + 1][xx + 1] == 7 || gyesangi[yy + 1][xx + 1] == 21) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 3;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 9 || gyesangi[yy + 1][xx + 1] == 23) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 4;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 10 || gyesangi[yy + 1][xx + 1] == 24) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 5;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 11 || gyesangi[yy + 1][xx + 1] == 25) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 6;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 13 || gyesangi[yy + 1][xx + 1] == 27) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 7;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 14 || gyesangi[yy + 1][xx + 1] == 28) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 8;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 15 || gyesangi[yy + 1][xx + 1] == 29) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 9;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 17 || gyesangi[yy + 1][xx + 1] == 18) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    a[i] = a[i + 1];
-
-                }
-                a[zari] = 0;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(60 + i, 28);
-                    drw(BLACK, WHITE);
-                    printf("%d", a[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (a[i] >= 0 && a[i] < 10) {
-                        if (a[i] == 1) oneprint(i);
-                        if (a[i] == 2) twoprint(i);
-                        if (a[i] == 3) threeprint(i);
-                        if (a[i] == 4) fourprint(i);
-                        if (a[i] == 5) fiveprint(i);
-                        if (a[i] == 6) sixprint(i);
-                        if (a[i] == 7) sevenprint(i);
-                        if (a[i] == 8) eightprint(i);
-                        if (a[i] == 9) nineprint(i);
-                        if (a[i] == 0) zeroprint(i);
-
-                    }
-                }
-
-
-            }
-        }
-        else {
-            if (gyesangi[yy + 1][xx + 1] == 34 || gyesangi[yy + 1][xx + 1] == 35) {
-                int n = 1;
-                if (type == 1) {
-
-                    gotoxy(60, 31);
-                    drw(BLACK, WHITE);
-                    printf("%d %d", left, right);
-                    type = 0;
-                }
-            }
-            if (gyesangi[yy + 1][xx + 1] == 5 || gyesangi[yy + 1][xx + 1] == 19) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                a[zari] = 1;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-
-            if (gyesangi[yy + 1][xx + 1] == 6 || gyesangi[yy + 1][xx + 1] == 20) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 2;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-
-            if (gyesangi[yy + 1][xx + 1] == 7 || gyesangi[yy + 1][xx + 1] == 21) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 3;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 9 || gyesangi[yy + 1][xx + 1] == 23) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 4;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 10 || gyesangi[yy + 1][xx + 1] == 24) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 5;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 11 || gyesangi[yy + 1][xx + 1] == 25) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 6;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 13 || gyesangi[yy + 1][xx + 1] == 27) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 7;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 14 || gyesangi[yy + 1][xx + 1] == 28) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 8;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 15 || gyesangi[yy + 1][xx + 1] == 29) {
-                cnt++;
-                for (k = 3; k < 12; k++) {
-                    for (j = 5; j < 35; j++) {
-                        gotoxy(j, k);
-                        drw(BLACK, BLACK);
-                        printf(" ");
-                    }
-                }
-                for (i = 0; i <= 6; i++) {
-
-                    b[i] = b[i + 1];
-
-                }
-                b[zari] = 9;
-                for (i = 0; i < 6; i++) {
-                    gotoxy(61 + i, 29);
-                    drw(BLACK, WHITE);
-                    printf("%d", b[i]);
-                }
-                for (i = 0; i <= 6; i++) {
-                    if (b[i] >= 0 && b[i] < 10) {
-                        if (b[i] == 1) oneprint(i);
-                        if (b[i] == 2) twoprint(i);
-                        if (b[i] == 3) threeprint(i);
-                        if (b[i] == 4) fourprint(i);
-                        if (b[i] == 5) fiveprint(i);
-                        if (b[i] == 6) sixprint(i);
-                        if (b[i] == 7) sevenprint(i);
-                        if (b[i] == 8) eightprint(i);
-                        if (b[i] == 9) nineprint(i);
-                        if (b[i] == 0) zeroprint(i);
-                    }
-                }
-
-            }
-            if (gyesangi[yy + 1][xx + 1] == 17 || gyesangi[yy + 1][xx + 1] == 18) {
-            }
-        }
+        gotoxy(3,28);
+        printf("%2d %2d\n",xx,yy);
 
     }
-    return 0;
+
 }
